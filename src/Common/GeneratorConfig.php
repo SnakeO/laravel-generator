@@ -18,6 +18,7 @@ class GeneratorConfig
 
     public $nsApiController;
     public $nsApiRequest;
+    public $nsApiResource;
 
     public $nsRequest;
     public $nsRequestBase;
@@ -152,16 +153,17 @@ class GeneratorConfig
 
         $this->nsApiController = config(
             'infyom.laravel_generator.namespace.api_controller',
-            'App\Http\Controllers\API'
+            'App\Http\Controllers'
         ).$prefix;
-        $this->nsApiRequest = config('infyom.laravel_generator.namespace.api_request', 'App\Http\Requests\API').$prefix;
+        $this->nsApiRequest = config('infyom.laravel_generator.namespace.api_request', 'App\Http\Requests').$prefix;
+        $this->nsApiResource = config('infyom.laravel_generator.namespace.api_request', 'App\Http\Resources').$prefix;
 
         $this->nsRequest = config('infyom.laravel_generator.namespace.request', 'App\Http\Requests').$prefix;
         $this->nsRequestBase = config('infyom.laravel_generator.namespace.request', 'App\Http\Requests');
         $this->nsBaseController = config('infyom.laravel_generator.namespace.controller', 'App\Http\Controllers');
         $this->nsController = config('infyom.laravel_generator.namespace.controller', 'App\Http\Controllers').$prefix;
 
-        $this->nsApiTests = config('infyom.laravel_generator.namespace.api_test', 'Tests\APIs');
+        $this->nsApiTests = config('infyom.laravel_generator.namespace.api_test', 'Tests');
         $this->nsRepositoryTests = config('infyom.laravel_generator.namespace.repository_test', 'Tests\Repositories');
         $this->nsTests = config('infyom.laravel_generator.namespace.tests', 'Tests');
     }
@@ -247,6 +249,7 @@ class GeneratorConfig
 
         $commandData->addDynamicVariable('$NAMESPACE_API_CONTROLLER$', $this->nsApiController);
         $commandData->addDynamicVariable('$NAMESPACE_API_REQUEST$', $this->nsApiRequest);
+        $commandData->addDynamicVariable('$NAMESPACE_API_RESOURCE$', $this->nsApiRequest);
 
         $commandData->addDynamicVariable('$NAMESPACE_BASE_CONTROLLER$', $this->nsBaseController);
         $commandData->addDynamicVariable('$NAMESPACE_CONTROLLER$', $this->nsController);

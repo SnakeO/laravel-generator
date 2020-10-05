@@ -21,20 +21,40 @@ class APIRequestGenerator extends BaseGenerator
     /** @var string */
     private $updateFileName;
 
+    /** @var string */
+    private $combinedFileName;
+
     public function __construct(CommandData $commandData)
     {
         $this->commandData = $commandData;
         $this->path = $commandData->config->pathApiRequest;
         $this->createFileName = 'Create'.$this->commandData->modelName.'APIRequest.php';
         $this->updateFileName = 'Update'.$this->commandData->modelName.'APIRequest.php';
+        $this->combinedFileName = $this->commandData->modelName.'Request.php';
     }
 
     public function generate()
     {
-        $this->generateCreateRequest();
-        $this->generateUpdateRequest();
+        $this->generateCombinedRequest();
     }
 
+    private function generateCombinedRequest()
+    {
+        $modelGenerator = new ModelGenerator($this->commandData);
+        $rules = $modelGenerator->generateUniqueRules();
+        $this->commandData->addDynamicVariable('$UNIQUE_RULES$', $rules);
+        
+        $templateData = get_template('api.request.combined_request', 'laravel-generator');
+
+        $templateData = fill_template($this->commandData->dynamicVars, $templateData);
+
+        FileUtil::createFile($this->path, $this->createFileName, $templateData);
+
+        $this->commandData->commandComment("\nCreate Request created: ");
+        $this->commandData->commandInfo($this->createFileName);
+    }
+
+    /*
     private function generateCreateRequest()
     {
         $templateData = get_template('api.request.create_request', 'laravel-generator');
@@ -62,15 +82,22 @@ class APIRequestGenerator extends BaseGenerator
         $this->commandData->commandComment("\nUpdate Request created: ");
         $this->commandData->commandInfo($this->updateFileName);
     }
+    */
 
     public function rollback()
     {
+        /*
         if ($this->rollbackFile($this->path, $this->createFileName)) {
             $this->commandData->commandComment('Create API Request file deleted: '.$this->createFileName);
         }
 
         if ($this->rollbackFile($this->path, $this->updateFileName)) {
             $this->commandData->commandComment('Update API Request file deleted: '.$this->updateFileName);
+        }
+        */
+
+        if ($this->rollbackFile($this->path, $this->combinedFileName)) {
+            $this->commandData->commandComment('Combined API Request file deleted: '.$this->createFileName);
         }
     }
 }

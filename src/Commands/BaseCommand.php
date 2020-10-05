@@ -93,6 +93,11 @@ class BaseCommand extends Command
             $requestGenerator->generate();
         }
 
+        if (!$this->isSkip('resource') and !$this->isSkip('api_requests')) {
+            $resourceGenerator = new ResourceRequestGenerator($this->commandData);
+            $resourceGenerator->generate();
+        }
+
         if (!$this->isSkip('controllers') and !$this->isSkip('api_controller')) {
             $controllerGenerator = new APIControllerGenerator($this->commandData);
             $controllerGenerator->generate();

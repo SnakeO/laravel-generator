@@ -2,13 +2,11 @@
 
 namespace $NAMESPACE_MODEL$;
 
-use $NAMESPACE_MODEL_EXTEND$ as Model;
 $SOFT_DELETE_IMPORT$
 $DOCS$
-class $MODEL_NAME$ extends Model
+class $MODEL_NAME$ extends $NAMESPACE_MODEL_EXTEND$
 {
 $SOFT_DELETE$
-    public $table = '$TABLE_NAME$';
     $TIMESTAMPS$
 $SOFT_DELETE_DATES$
 $CONNECTION$
@@ -24,15 +22,6 @@ $PRIMARY$
      */
     protected $casts = [
         $CAST$
-    ];
-
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public static $rules = [
-        $RULES$
     ];
 
     $RELATIONS$

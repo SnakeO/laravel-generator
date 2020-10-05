@@ -1,8 +1,7 @@
 /**
      * Display the specified $MODEL_NAME$.
-     * GET|HEAD /$MODEL_NAME_PLURAL_CAMEL$/{id}
      *
-     * @param int $id
+     * @param $NAMESPACE_MODEL$\$MODEL_NAME$ $MODEL_NAME_CAMEL$
      *
      * @return Response
      */

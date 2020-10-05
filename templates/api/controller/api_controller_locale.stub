@@ -2,110 +2,69 @@
 
 namespace $NAMESPACE_API_CONTROLLER$;
 
-use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
-use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
 use $NAMESPACE_MODEL$\$MODEL_NAME$;
-use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
+use $NAMESPACE_API_REQUEST$\$MODEL_NAME$Request;
+use $NAMESPACE_API_RESOURCE$\$MODEL_NAME$Resource;
 use Illuminate\Http\Request;
-use $NAMESPACE_APP$\Http\Controllers\AppBaseController;
 use Response;
 
 $DOC_CONTROLLER$
-class $MODEL_NAME$APIController extends AppBaseController
+class $MODEL_NAME$APIController extends Controller
 {
-    /** @var  $MODEL_NAME$Repository */
-    private $$MODEL_NAME_CAMEL$Repository;
-
-    public function __construct($MODEL_NAME$Repository $$MODEL_NAME_CAMEL$Repo)
-    {
-        $this->$MODEL_NAME_CAMEL$Repository = $$MODEL_NAME_CAMEL$Repo;
-    }
-
     $DOC_INDEX$
     public function index(Request $request)
     {
-        $$MODEL_NAME_PLURAL_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
+        $this->authorize('read', new $MODEL_NAME$());
 
-        return $this->sendResponse(
-            $$MODEL_NAME_PLURAL_CAMEL$->toArray(),
-            __('messages.retrieved', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.plural')])
-        );
+        $validated = $request->validated();
+
+        $query = request('query');
+
+        if ($query) {
+            return $MODEL_NAME$Resource::collection($MODEL_NAME$::search($query)->paginate());
+        }
+
+        return $MODEL_NAME$Resource::collection($MODEL_NAME$::all()->paginate());
     }
 
     $DOC_STORE$
-    public function store(Create$MODEL_NAME$APIRequest $request)
+    public function store($MODEL_NAME$Request $request)
     {
-        $input = $request->all();
+        $this->authorize('create', new $MODEL_NAME_CAMEL$());
 
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->create($input);
+        $validated = $request->validated();
 
-        return $this->sendResponse(
-            $$MODEL_NAME_CAMEL$->toArray(),
-            __('messages.saved', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.singular')])
-        );
+        $$MODEL_NAME_CAMEL$ = $MODEL_NAME_CAMEL$::create($validated);
+
+        return (new $MODEL_NAME$Resource($$MODEL_NAME_CAMEL$, false))->response()->setStatusCode(201);
     }
 
     $DOC_SHOW$
-    public function show($id)
+    public function show($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
-        /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->find($id);
+        $this->authorize('read', $$MODEL_NAME_CAMEL$);
 
-        if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError(
-                __('messages.not_found', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.singular')])
-            );
-        }
-
-        return $this->sendResponse(
-            $$MODEL_NAME_CAMEL$->toArray(),
-            __('messages.retrieved', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.singular')])
-        );
+        return new $MODEL_NAME$Resource($$MODEL_NAME_CAMEL$, false);
     }
 
     $DOC_UPDATE$
-    public function update($id, Update$MODEL_NAME$APIRequest $request)
+    public function update($MODEL_NAME$Request $request, $MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
-        $input = $request->all();
+        $this->authorize('update', $$MODEL_NAME_CAMEL$);
 
-        /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->find($id);
+        $validated = $request->validated();
+        $$MODEL_NAME_CAMEL$->fill($validated)->save();
 
-        if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError(
-                __('messages.not_found', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.singular')])
-            );
-        }
-
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->update($input, $id);
-
-        return $this->sendResponse(
-            $$MODEL_NAME_CAMEL$->toArray(),
-            __('messages.updated', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.singular')])
-        );
+        return new CardResource($$MODEL_NAME_CAMEL$, false);
     }
 
     $DOC_DESTROY$
-    public function destroy($id)
+    public function destroy($MODEL_NAME$ $$MODEL_NAME_CAMEL$)
     {
-        /** @var $MODEL_NAME$ $$MODEL_NAME_CAMEL$ */
-        $$MODEL_NAME_CAMEL$ = $this->$MODEL_NAME_CAMEL$Repository->find($id);
-
-        if (empty($$MODEL_NAME_CAMEL$)) {
-            return $this->sendError(
-                __('messages.not_found', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.singular')])
-            );
-        }
+        $this->authorize('delete', $$MODEL_NAME_CAMEL$);
 
         $$MODEL_NAME_CAMEL$->delete();
 
-        return $this->sendResponse(
-            $id,
-            __('messages.deleted', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.singular')])
-        );
+        return response()->json(null, 204);
     }
 }
